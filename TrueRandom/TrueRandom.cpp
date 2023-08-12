@@ -42,7 +42,7 @@ int TrueRandomClass::randomBitRaw(void) {
   DDRC |= _BV(0);
   // Release Analog0, apply internal pullup
   DDRC &= ~_BV(0);
-  PORTC |= _BV(1);
+  PORTC |= _BV(0);
   // Immediately start a sample conversion on Analog0
   ADCSRA |= _BV(ADSC);
   // Wait for conversion to complete
