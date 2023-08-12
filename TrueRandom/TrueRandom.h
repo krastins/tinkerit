@@ -11,6 +11,7 @@
 class TrueRandomClass
 {
   public:
+    static void setPin(uint8_t pin);
     int rand();
     long random();
     long random(long howBig);
@@ -23,6 +24,8 @@ class TrueRandomClass
   private:
     int randomBitRaw(void);
     int randomBitRaw2(void);
+    static int _pin;
+
 };
 extern TrueRandomClass TrueRandom;
 #endif

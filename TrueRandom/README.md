@@ -4,11 +4,11 @@ TrueRandom generates true random numbers on Arduino. They are different every ti
 
 # Compatibility
 
-TrueRandom currently functions on the Arduino Diecimila, Duemilanove, 168 and 328 based Arduinos. It does not yet function on the Arduino Mega. TrueRandom uses Analog 0\. Do not connect anything to this pin. These restrictions may be removed in future versions of this library.
+TrueRandom currently functions on the Arduino Diecimila, Duemilanove, 168 and 328 based Arduinos. It does not yet function on the Arduino Mega. TrueRandom uses Analog 0\. by default or other analog pin specified by `setPin` method. Do not connect anything to this pin. These restrictions may be removed in future versions of this library.
 
 # Download
 
-[Download TrueRandom library.](http://tinkerit.googlecode.com/files/TrueRandom.zip) Extract the zip file, and copy the directory to your Arduino libraries folder.
+[Download an archive of tinkerit repo.](https://github.com/krastins/tinkerit/archive/refs/heads/main.zip) Extract the zip file and copy the `TrueRandom` directory to your Arduino libraries folder.
 
 # What happens when you use the Arduino random() function?
 
@@ -26,6 +26,8 @@ You get a random number. Really random. Different every time you restart.
 void setup() {
   Serial.begin(9600);
 
+  TrueRandom.setPin(5); // use analog pin 5 as the source of randomness
+
   Serial.print("I threw a random die and got ");
   Serial.print(random(1,7));
 
@@ -40,6 +42,12 @@ void loop() {
 ```
 
 Upload that code to an Arduino Duemilanove and watch it on the Serial Monitor at 9600 baud. Hit the reset button, and see what it does. The random() function returns the same value every time, but the TrueRandom version is always different.
+
+# TrueRandom setup functions
+
+## TrueRandom.setPin(pin)
+
+Choose analog pin (e.g. 0-5) as the source of randomness. Defaults to pin 0 if `setPin()` is not called.
 
 # TrueRandom basic functions
 

@@ -7,6 +7,13 @@
 #include <avr/io.h>
 #include "TrueRandom.h"
 
+// default to pin A0, if pin is not explicitly set
+int TrueRandomClass::_pin = 0;
+
+static void TrueRandomClass::setPin(uint8_t pin) {
+  TrueRandomClass::_pin = pin;
+}
+
 int TrueRandomClass::randomBitRaw(void) {
   uint8_t copyAdmux, copyAdcsra, copyAdcsrb, copyPortc, copyDdrc;
   uint16_t i;
@@ -20,8 +27,12 @@ int TrueRandomClass::randomBitRaw(void) {
   copyPortc = PORTC;
   copyDdrc = DDRC;
   
-  // Perform a conversion on Analog0, using the Vcc reference
+  // Perform a conversion on analog pin, using the Vcc reference
   ADMUX = _BV(REFS0);
+  // select the corresponding channel 0-7
+  // ANDing with ’7′ will always keep the value
+  // of ‘ch’ between 0 and 7
+  ADMUX |= (_pin & 0x07);
   
 #if F_CPU > 16000000
   // ADC is enabled, divide by 32 prescaler
@@ -37,17 +48,16 @@ int TrueRandomClass::randomBitRaw(void) {
   // Autotriggering disabled
   ADCSRB = 0;
 
-  // Pull Analog0 to ground
-  PORTC &=~_BV(0);
-  DDRC |= _BV(0);
-  // Release Analog0, apply internal pullup
-  DDRC &= ~_BV(0);
-  PORTC |= _BV(0);
-  // Immediately start a sample conversion on Analog0
+  // Pull analog pin to ground
+  PORTC &=~_BV(_pin);
+  DDRC |= _BV(_pin);
+  // Release analog pin, apply internal pullup
+  DDRC &= ~_BV(_pin);
+  PORTC |= _BV(_pin);
+  // Immediately start a sample conversion on analog pin
   ADCSRA |= _BV(ADSC);
   // Wait for conversion to complete
-  while (ADCSRA & _BV(ADSC)) PORTC ^= _BV(0);
-  // Xor least significant bits together
+  while (ADCSRA & _BV(ADSC)) PORTC ^= _BV(_pin);
   bit = ADCL;
   // We're ignoring the high bits, but we have to read them before the next conversion
   dummy = ADCH;
